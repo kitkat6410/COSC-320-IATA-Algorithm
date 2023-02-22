@@ -10,7 +10,7 @@ def generate_random_string(n):
     return ''.join(random.choice(alphanumeric) for _ in range(n))
 
 # Generate a random string of length 10, including spaces
-random_string = generate_random_string(10)
+random_string = generate_random_string(50)
 print(random_string)
 
 # Define IATA hashmap
@@ -22,11 +22,16 @@ with open('airport_codes.csv', 'r', encoding='utf-8') as file:
         IATACodeHashmap[row[0]] = row[1]
 
 # Define data
-with open('test_reddit_posts.csv', 'r', encoding='utf-8') as file:
-    reader = csv.reader(file)
-    Data = []
-    for row in reader:
-        Data.append(row[0])
+# with open('test_reddit_posts.csv', 'r', encoding='utf-8') as file:
+#     reader = csv.reader(file)
+#     Data = []
+#     for row in reader:
+#         Data.append(row[0])
+Data = []
+for i in range (1000000):
+    random_number = random.randint(10, 50)
+    Data.append(generate_random_string(random_number))
+
 
 # Define the function to be timed
 def process_data_n(n):
