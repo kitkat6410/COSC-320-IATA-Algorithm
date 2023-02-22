@@ -17,7 +17,7 @@ except Exception as e:
     
 Data = []
 try:
-    with open('datasets/aviation_submissions_all.csv', 'r', encoding='utf-8') as file: 
+    with open('datasets/aviation_comments_submissions_2023.csv', 'r', encoding='utf-8') as file: 
         reader = csv.reader(file)
         headers = next(reader)
         for row in reader:
