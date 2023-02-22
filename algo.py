@@ -38,8 +38,8 @@ Data = {"wow! This is a test!", "I love GCT Airport!", "CSE", "LAX 2002", "relax
 import csv
 IATACodeHashmap = {}
 try:
-    #with open('airport_codes.csv', 'r', encoding='utf-8') as file: 
-    with open('C:/Users/adamf/OneDrive/Documents/iata_codes.csv', 'r', encoding='utf-8') as file:
+    with open('airport_codes.csv', 'r', encoding='utf-8') as file: 
+    #with open('C:/Users/adamf/OneDrive/Documents/iata_codes.csv', 'r', encoding='utf-8') as file:
         reader = csv.reader(file)
         headers = next(reader)
         IATACodeHashmap = {}
