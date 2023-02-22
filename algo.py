@@ -22,10 +22,19 @@ for each title or comment (with an added space as first and last character) (cal
 #Here is the data that will have it's acronyms replaced with the airport name
 ################################
 
-Data = {"wow! This is a test!", "I love GCT Airport!", "CSE", "LAX 2002", "relaxing day at my mom's house", "VERY RELAXING", "ABC", "LAX LAX", "LAXLAX", "LAX sucks lol 😀"}
-#Data = {"LAX LAX LAX"}
+Data = {"wow! This is a test!", "I love GCT Airport!", "CSF", "LAX 2002", "relaxing day at my mom's house", "VERY RELAXING", "ABC", "LAX LAX", "LAXLAX", "LAX sucks lol 😀", "wa", "", "!COW!", "I've used my phone fully unpressurized above 20k, the only part turned off was the cell antenna, the GPS and wifi and everything else was on"}
+# Data = {"""APG ASQ RCS 
+# """}
+# Data = {"""LAX LAX LAX LAX asd"""}
+#Data = {"?? IAH BNA ??"}
+# Data = {"AIR OFF 42"}
+# Data = {"New FAA Aviation Weather Handbook FAA-H-8083-28"}
+# Data = {"HOT AND!!!!"}
+# Data = {"LAX LAX ab"}
+# Data = {"GET THA MUH  "}
+#Data = {"CSF"}
 
-# IATACodeHashmap = {
+# IATACodeHashmap = {S
 #   "CSE": "Crested Butte Airpark",
 #   "GCT": "Grand Canyon Bar Ten Airstrip",
 #   "LAX": "Los Angeles International Airport"
@@ -38,8 +47,8 @@ Data = {"wow! This is a test!", "I love GCT Airport!", "CSE", "LAX 2002", "relax
 import csv
 IATACodeHashmap = {}
 try:
-    #with open('airport_codes.csv', 'r', encoding='utf-8') as file: 
-    with open('C:/Users/adamf/OneDrive/Documents/iata_codes.csv', 'r', encoding='utf-8') as file:
+    with open('airport_codes.csv', 'r', encoding='utf-8') as file: 
+    #with open('C:/Users/adamf/OneDrive/Documents/iata_codes.csv', 'r', encoding='utf-8') as file:
         reader = csv.reader(file)
         headers = next(reader)
         IATACodeHashmap = {}
@@ -61,22 +70,29 @@ for title_comment in Data:
 
 #I may have made a made this lower level than it needed to be but it works!
 for title_comment in Data:
-  title_comment = " " + title_comment + " "
-  #find all capital 3-letter words
-  endindex = len(title_comment) - 4
-  i = 0
-  while i < endindex:
-    #print(str(i) + title_comment[i] + " " + title_comment[i+4])
-    if not title_comment[i].isalnum() and not title_comment[i+4].isalnum(): #check if the character left and right of potential code is nonalphanumeric
-      potentialCode = title_comment[i+1] + title_comment[i+2] + title_comment[i+3]
-      if potentialCode.isupper():
-        fullName = IATACodeHashmap.get(potentialCode)
-        if fullName!= None: #if there was a match
-          title_comment = title_comment[0 : i + 1] + fullName + title_comment[i+4 : len(title_comment)]
-          endindex += (len(fullName) - 2) #adjust the end index 
-          i += len(fullName) #skip scanning the airport name
-    i += 1
-  title_comment = title_comment[1 : len(title_comment) - 1] #remove first and last space
+  if (len(title_comment) >= 3): #filter out titles and comments that are less than 3 characters long (iata codes are 3 characters long)
+    
+    title_comment = " " + title_comment + "  "
+    #find all capital 3-letter words
+    endindex = len(title_comment) - 5
+    i = 0
+    # print("comment length" + str(len(title_comment)))
+    
+    while i < endindex:
+      # print(len(title_comment))
+      # print(str(i) + title_comment[i] + " " + title_comment[i+4])
+      if not title_comment[i].isalnum() and not title_comment[i+4].isalnum(): #check if the character left and right of potential code is nonalphanumeric
+        potentialCode = title_comment[i+1] + title_comment[i+2] + title_comment[i+3]
+        if potentialCode.isupper():
+          fullName = IATACodeHashmap.get(potentialCode)
+          if fullName!= None: #if there was a match
+            title_comment = title_comment[0 : i + 1] + fullName + title_comment[i+4 : len(title_comment)]
+            endindex += (len(fullName) - 3) #adjust the end index 
+            i += len(fullName) #skip scanning the airport name
+            # print("endindex: " + str(endindex))
+            # print("i: " + str(i))
+      i += 1
+    title_comment = title_comment[1 : len(title_comment) - 2] #remove first and last space
   newData.append(title_comment)
 
 
