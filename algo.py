@@ -22,7 +22,7 @@ for each title or comment (with an added space as first and last character) (cal
 #Here is the data that will have it's acronyms replaced with the airport name
 ################################
 
-Data = {"wow! This is a test!", "I love GCT Airport!", "CSE", "LAX 2002", "relaxing day at my mom's house", "VERY RELAXING", "ABC", "LAX LAX", "LAXLAX", "LAX sucks lol 😀"}
+Data = {"wow! This is a test!", "I love GCT Airport!", "CSE", "LAX 2002", "relaxing day at my mom's house", "VERY RELAXING", "ABC", "LAX LAX", "LAXLAX", "LAX sucks lol 😀", "wa", ""}
 #Data = {"LAX LAX LAX"}
 
 # IATACodeHashmap = {
@@ -61,22 +61,24 @@ for title_comment in Data:
 
 #I may have made a made this lower level than it needed to be but it works!
 for title_comment in Data:
-  title_comment = " " + title_comment + " "
-  #find all capital 3-letter words
-  endindex = len(title_comment) - 4
-  i = 0
-  while i < endindex:
-    #print(str(i) + title_comment[i] + " " + title_comment[i+4])
-    if not title_comment[i].isalnum() and not title_comment[i+4].isalnum(): #check if the character left and right of potential code is nonalphanumeric
-      potentialCode = title_comment[i+1] + title_comment[i+2] + title_comment[i+3]
-      if potentialCode.isupper():
-        fullName = IATACodeHashmap.get(potentialCode)
-        if fullName!= None: #if there was a match
-          title_comment = title_comment[0 : i + 1] + fullName + title_comment[i+4 : len(title_comment)]
-          endindex += (len(fullName) - 2) #adjust the end index 
-          i += len(fullName) #skip scanning the airport name
-    i += 1
-  title_comment = title_comment[1 : len(title_comment) - 1] #remove first and last space
+  if (len(title_comment) > 3): #filter out titles and comments that are less than 3 characters long (iata codes are 3 characters long)
+
+    title_comment = " " + title_comment + " "
+    #find all capital 3-letter words
+    endindex = len(title_comment) - 4
+    i = 0
+    while i < endindex:
+      #print(str(i) + title_comment[i] + " " + title_comment[i+4])
+      if not title_comment[i].isalnum() and not title_comment[i+4].isalnum(): #check if the character left and right of potential code is nonalphanumeric
+        potentialCode = title_comment[i+1] + title_comment[i+2] + title_comment[i+3]
+        if potentialCode.isupper():
+          fullName = IATACodeHashmap.get(potentialCode)
+          if fullName!= None: #if there was a match
+            title_comment = title_comment[0 : i + 1] + fullName + title_comment[i+4 : len(title_comment)]
+            endindex += (len(fullName) - 2) #adjust the end index 
+            i += len(fullName) #skip scanning the airport name
+      i += 1
+    title_comment = title_comment[1 : len(title_comment) - 1] #remove first and last space
   newData.append(title_comment)
 
 

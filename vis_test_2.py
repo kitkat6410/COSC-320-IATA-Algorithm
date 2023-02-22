@@ -28,10 +28,20 @@ with open('airport_codes.csv', 'r', encoding='utf-8') as file:
 #     for row in reader:
 #         Data.append(row[0])
 Data = []
-for i in range (1000000):
-    random_number = random.randint(10, 50)
-    Data.append(generate_random_string(random_number))
+# for i in range (10000):
+#     random_number = random.randint(10, 50)
+#     Data.append(generate_random_string(random_number))
 
+try:
+    with open('/datasets/aviation_comments_submissions_2023.csv', 'r', encoding='utf-8') as file: 
+    #with open('C:/Users/adamf/OneDrive/Documents/iata_codes.csv', 'r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        headers = next(reader)
+        Data = []
+        for row in reader:
+            Data[row[0]] = row[1]
+except Exception as e:
+    print("Error:", e)
 
 # Define the function to be timed
 def process_data_n(n):
@@ -70,3 +80,4 @@ plt.xlabel("Input size (n)")
 plt.ylabel("Runtime (s)")
 plt.title("Runtime complexity of code")
 plt.show()
+print("done!")
