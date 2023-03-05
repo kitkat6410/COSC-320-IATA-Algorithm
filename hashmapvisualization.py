@@ -28,7 +28,7 @@ except Exception as e:
 print("data len: " + str(len(Data)))
 
 
-def algo(myData):
+def algo(myData,myHashMap):
     newData = []
     for title_comment in myData:
         if (len(title_comment) >= 3):  # filter out titles and comments that are less than 3 characters long (iata codes are 3 characters long)
@@ -47,7 +47,7 @@ def algo(myData):
                     potentialCode = title_comment[i+1] + \
                         title_comment[i+2] + title_comment[i+3]
                     if potentialCode.isupper():
-                        fullName = IATACodeHashmap.get(potentialCode)
+                        fullName = myHashMap.get(potentialCode)
                         if fullName != None:  # if there was a match
                             title_comment = title_comment[0: i + 1] + \
                                 fullName + \
@@ -76,7 +76,7 @@ def tryItABunch(myFn, startN=10, endN=100, stepSize=10, numTrials=20, listMax=10
         for t in range(numTrials):
             lst = Data[:1000]  # generate a random list of length n
             start = time.time()
-            myFn(lst)
+            myFn(lst,myHashMap)
             end = time.time()
             runtime += (end - start) * 1000  # measure in milliseconds
         runtime = runtime/numTrials
