@@ -1,71 +1,100 @@
-# %matplotlib inline
+import csv
+import time
 import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
-import csv
-airport_codes = {}
-with open('airport_codes.csv', 'r', encoding='utf-8') as file:
-    reader = csv.reader(file)
-    headers = next(reader)
-    airport_codes = {}
-    for row in reader:
-        airport_codes[row[0]] = row[1]
 
-    
-#     for each title or comment (with an added space as first and last character) (call it Data){
-#   //find all capital 3-letter words
-#   for (int i = 0; i < Data.length - 5; i++){     (length - 5 to not go out of string bounds)
-#       if ( Data[i] is not alphanumeric and Data[i+4] is not alphanumeric) {
-#          String potentialCode = Data[i+1] + Data[i+2] + Data[i+3];
-#          if (potentialCode is uppercase)	
-#                 String fullName = IATACodeHashmap.get(potentialCode);
-# 	    if (fullName != null) { //if there was a match
-#                         String L = Data[0 : i]; //everything left of IATA code
-#                         String R = Data[i+4 : Data.length]; //everything right of IATA code
-# 		Data = L + fullName + R; //replace the IATA code with the airport name
-#                         i = i + fullName.length; //skip scanning the airport name
-# 	    }
-#           }
-#     }
-# }
+IATACodeHashmap = {}
+try:
+    with open('airport_codes.csv', 'r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        headers = next(reader)
+        IATACodeHashmap = {}
+        for row in reader:
+            IATACodeHashmap[row[0]] = row[1]
+except Exception as e:
+    print("Error:", e)
+
+Data = []
+try:
+    with open('datasets/aviation_comments_submissions_2023.csv', 'r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        headers = next(reader)
+        for row in reader:
+            Data.append(row[0])
+except Exception as e:
+    print("Error:", e)
+
+print("data len: " + str(len(Data)))
 
 
-def naiveInsertionSort(A):
-    B = [None for i in range(len(A))] # B is a blank list of the same length as A
-    for x in A:
-        for i in range(len(B)):
-            if B[i] == None or B[i] > x:
-                # then x goes in spot i, and we should move everything over.
-                j = len(B)-1
-                while j > i:
-                    B[j] = B[j-1]
-                    j -= 1
-                B[i] = x
-                break # okay we are done placing x
-    return B
-A = [6,4,3,8,5]
-B = naiveInsertionSort(A)
-print(B)
-def InsertionSort(A):
-    for i in range(1,len(A)):
-        current = A[i]
-        j = i-1
-        while j >= 0 and A[j] > current:
-            A[j+1] = A[j]
-            j -= 1
-        A[j+1] = current
-A = [6,4,3,8,5]
-InsertionSort(A)
-print(A)
-from tryItABunch import tryItABunch
-nValuesNaive, tValuesNaive = tryItABunch( naiveInsertionSort, startN = 50, endN = 1050, stepSize=50, numTrials=10, listMax = 10 )
-nValues, tValues = tryItABunch( InsertionSort, startN = 50, endN = 1050, stepSize=50, numTrials=5, listMax = 10) 
-plt.plot(nValuesNaive, tValuesNaive, color="red", label="Naive version")
-plt.plot(nValues, tValues, color="blue", label="Less naive version")
+def algo(myData):
+    newData = []
+    for title_comment in myData:
+        if (len(title_comment) >= 3):  # filter out titles and comments that are less than 3 characters long (iata codes are 3 characters long)
+
+            title_comment = " " + title_comment + "  "
+            # find all capital 3-letter words
+            endindex = len(title_comment) - 5
+            i = 0
+            # print("comment length" + str(len(title_comment)))
+
+            while i < endindex:
+                # print(len(title_comment))
+                # print(str(i) + title_comment[i] + " " + title_comment[i+4])
+                # check if the character left and right of potential code is nonalphanumeric
+                if not title_comment[i].isalnum() and not title_comment[i+4].isalnum():
+                    potentialCode = title_comment[i+1] + \
+                        title_comment[i+2] + title_comment[i+3]
+                    if potentialCode.isupper():
+                        fullName = IATACodeHashmap.get(potentialCode)
+                        if fullName != None:  # if there was a match
+                            title_comment = title_comment[0: i + 1] + \
+                                fullName + \
+                                title_comment[i+4: len(title_comment)]
+                            # adjust the end index
+                            endindex += (len(fullName) - 3)
+                            # skip scanning the airport name
+                            i += len(fullName)
+                            # print("endindex: " + str(endindex))
+                            # print("i: " + str(i))
+                i += 1
+            # remove first and last space
+            title_comment = title_comment[1: len(title_comment) - 2]
+        newData.append(title_comment)
+    return newData
+
+
+def tryItABunch(myFn, startN=10, endN=100, stepSize=10, numTrials=20, listMax=10):
+    nValues = []
+    tValues = []
+    for n in range(startN, endN, stepSize):
+        print("trying " + str(n) + " times")
+        # run myFn several times and average to get a decent idea.
+        runtime = 0
+        for t in range(numTrials):
+            lst = Data[:n]  # generate a random list of length n
+            start = time.time()
+            myFn(lst)
+            end = time.time()
+            runtime += (end - start) * 1000  # measure in milliseconds
+        runtime = runtime/numTrials
+        nValues.append(n)
+        tValues.append(runtime)
+    return nValues, tValues
+
+
+end = 2500
+nValues, tValues = tryItABunch(algo, startN=10, endN=end)
+
+m = tValues[-1]/nValues[-1]
+x = np.arange(0, end, 10)
+y = m*x
+
+plt.plot(nValues, tValues, color="blue", label="HashMap Algorithm")
+plt.plot(x,y, color = "red", label="O(n)")
 plt.xlabel("n")
 plt.ylabel("Time(ms)")
 plt.legend()
-plt.title("Naive vs. non-naive insertion sort")
+plt.title("Hashmap Algorithm vs Linear Line")
 plt.show()
-
-
