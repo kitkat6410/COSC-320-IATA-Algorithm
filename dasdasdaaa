@@ -1,0 +1,13 @@
+[1mdiff --git a/visualization.py b/visualization.py[m
+[1mindex 9185b6d..15c55c1 100644[m
+[1m--- a/visualization.py[m
+[1m+++ b/visualization.py[m
+[36m@@ -84,7 +84,7 @@[m [mdef tryItABunch(myFn, startN=10, endN=100, stepSize=10, numTrials=20, listMax=10[m
+     return nValues, tValues[m
+ [m
+ [m
+[31m-end = 2500[m
+[32m+[m[32mend = 2000[m
+ nValues, tValues = tryItABunch(algo, startN=10, endN=end)[m
+ [m
+ m = tValues[-1]/nValues[-1][m
